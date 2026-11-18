@@ -84,13 +84,23 @@ Once flashed, 6 individual light entities (`light.dimmer_ch1` through `light.dim
 
 ---
 
-## Manufacturing & Assembly
+## Manufacturing & Ordering on JLCPCB
 
-Ready-to-order manufacturing files are included in the repository:
-- **Gerber & Drill Files**: [`manufacturing/gerbers/`](manufacturing/gerbers/) (standard RS-274X and Excellon format, JLCPCB / PCBWay compatible).
-- **Bill of Materials (BOM)**: [`manufacturing/BOM.csv`](manufacturing/BOM.csv).
-- **Pick & Place (CPL)**: [`manufacturing/dimmer_6ch_cpl.csv`](manufacturing/dimmer_6ch_cpl.csv).
+Pre-packaged, verified files ready for 1-click drag-and-drop ordering on [JLCPCB](https://jlcpcb.com):
+
+### 1. Bare PCB Fabrication
+- **Direct Upload File**: [`manufacturing/jlcpcb/GERBER-dimmer_6ch.zip`](manufacturing/jlcpcb/GERBER-dimmer_6ch.zip)
+  - Simply drag & drop `GERBER-dimmer_6ch.zip` into the JLCPCB quote page.
+  - Automatically detected specs: 2-layer FR-4, **152.0 mm × 72.0 mm**, 1.6mm thickness, 1oz copper, green solder mask / white silkscreen.
+
+### 2. SMT Assembly (PCBA)
+When enabling **PCB Assembly** on JLCPCB:
+- **BOM File**: [`manufacturing/jlcpcb/BOM-dimmer_6ch.csv`](manufacturing/jlcpcb/BOM-dimmer_6ch.csv) (includes pre-matched **LCSC Part Numbers** for 100% automated part recognition).
+- **CPL / Centroid File**: [`manufacturing/jlcpcb/CPL-dimmer_6ch.csv`](manufacturing/jlcpcb/CPL-dimmer_6ch.csv) (precise metric coordinates and rotation for pick-and-place machines).
+
+### 3. Source & Project Files
 - **KiCad Project Files**: [`dimmer_6ch.kicad_pro`](dimmer_6ch.kicad_pro), [`dimmer_6ch.kicad_pcb`](dimmer_6ch.kicad_pcb).
+- **Python Export Automation**: [`manufacturing/export_jlcpcb.py`](manufacturing/export_jlcpcb.py).
 - **DRC Verification**: 0 electrical violations, 0 unconnected items ([`drc_report.json`](drc_report.json)).
 
 ---
