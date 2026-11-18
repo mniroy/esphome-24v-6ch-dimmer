@@ -1,0 +1,35 @@
+Reference,Quantity,Value,Footprint,Description
+J1,1,24V_IN,TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal,24V DC Input Screw Terminal (2-pin 5.08mm)
+J2-J7,6,CH1-CH6,TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal,24V LED Output Screw Terminal (2-pin 5.08mm)
+J_LAN,1,HR911105A LAN,RJ45_Hanrun_HR911105A_Horizontal,HanRun HR911105A 10/100 RJ45 Ethernet MagJack (Tersedia luas di Tokopedia/Shopee)
+U3,1,W5500,LQFP-48_7x7mm_P0.5mm,WIZnet W5500 Hardwired TCP/IP SPI Ethernet Controller
+Y1,1,25MHz,Crystal_SMD_3225-4Pin_3.2x2.5mm,25MHz SMD Crystal Oscillator for W5500
+R_EX,1,12.4k,R_0805_2012Metric,12.4k 1% Reference Resistor for W5500 EXRES1
+C_1V2,1,100nF,C_0805_2012Metric,W5500 1.2V Internal Regulator Decoupling Capacitor
+U4,1,AMS1117-3.3,SOT-223-3_TabPin2,Dedicated 3.3V LDO Regulator for W5500 Ethernet
+C_E1,1,10uF,C_0805_2012Metric,AMS1117-3.3 Input Decoupling Capacitor (5V)
+C_E2,1,10uF,C_0805_2012Metric,AMS1117-3.3 Output Decoupling Capacitor (3.3V ETH)
+F1,1,15A FUSE,Fuseholder_Blade_Mini_Keystone_3568,Mini Automotive Blade Fuse Holder + 15A Fuse
+Q_REV,1,AOD403,TO-252-3_TabPin2,P-Channel MOSFET Reverse Polarity Protection (DPAK)
+DZ1,1,BZT52C12,D_SOD-123,12V Zener Diode Gate Clamp
+R_REV,1,100k,R_0805_2012Metric,Reverse Polarity Gate Pull-Down Resistor
+D_TVS,1,SMBJ28A,D_SMB,28V Transient Voltage Suppressor Diode
+C1,1,470uF 35V,CP_Radial_D10.0mm_P5.00mm,24V Bulk Electrolytic Capacitor Low-ESR
+C2,1,10uF 50V,C_1206_3216Metric,24V Ceramic Decoupling Capacitor
+C3,1,100nF,C_0805_2012Metric,24V High-Frequency Decoupling Capacitor
+C4,1,100uF 35V,CP_Radial_D6.3mm_P2.50mm,Buck Converter Input Electrolytic Capacitor
+U1,1,XL1509-5.0,SOIC-8_3.9x4.9mm_P1.27mm,24V to 5V 2A Step-Down Buck Converter IC
+D_BUCK,1,SS34,D_SMA,3A 40V Schottky Catch Diode
+L1,1,33uH 3A,L_Bourns_SRN6045TA,Shielded SMD Power Inductor 33uH 3A
+C5,1,220uF 16V,CP_Radial_D6.3mm_P2.50mm,5V Buck Output Electrolytic Capacitor
+C6,1,100nF,C_0805_2012Metric,5V Output Decoupling Capacitor
+R_PWR,1,1k,R_0805_2012Metric,5V Power LED Current Limiting Resistor
+D_PWR,1,LED GRN,LED_0805_2012Metric,5V Power Indicator LED (Green)
+U2,1,ESP32-DevKit-30P,ESP32-DevKit-USB-C + 2x PinSocket_1x15_P2.54mm,Modular 30-Pin ESP32 DevKit V1 USB-C (Socketed)
+Q1-Q6,6,AOD4184A,TO-252-3_TabPin2,N-Channel Logic-Level Power MOSFET 40V 50A (<9.5mOhm)
+"R1,R3,R5,R7,R9,R11",6,100R,R_0805_2012Metric,MOSFET Gate Series Resistor
+"R2,R4,R6,R8,R10,R12",6,10k,R_0805_2012Metric,MOSFET Gate Pull-Down Resistor
+D1-D6,6,SS34,D_SMA,3A 40V Flyback/Clamping Schottky Diode
+RL1-RL6,6,10k,R_0805_2012Metric,Channel Status LED Resistor
+LED1-LED6,6,LED,LED_0805_2012Metric,Channel Dimming Status LED
+H1-H4,4,M3,MountingHole_3.2mm_M3_Pad_Via,M3 PCB Mounting Hole
