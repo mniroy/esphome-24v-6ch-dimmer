@@ -51,7 +51,7 @@ def add_net(board, name):
     return net
 
 
-def load_fp(lib_dir, fp_name, ref, val, x, y, angle=0.0, val_offset=(0, 2.8), ref_offset=(0, -2.8), show_val=True):
+def load_fp(lib_dir, fp_name, ref, val, x, y, angle=0.0, val_offset=(0, 2.8), ref_offset=(0, -2.8), show_val=True, show_ref=True, text_size=0.8, text_thick=0.13, ref_angle=0.0, val_angle=0.0):
     fp = pcbnew.FootprintLoad(lib_dir, fp_name)
     fp.SetReference(ref)
     fp.SetValue(val)
@@ -60,19 +60,19 @@ def load_fp(lib_dir, fp_name, ref, val, x, y, angle=0.0, val_offset=(0, 2.8), re
         fp.SetOrientationDegrees(angle)
 
     ref_txt = fp.Reference()
-    ref_txt.SetVisible(True)
+    ref_txt.SetVisible(show_ref)
     ref_txt.SetLayer(pcbnew.F_SilkS)
-    ref_txt.SetTextSize(pcbnew.VECTOR2I(mm(0.85), mm(0.85)))
-    ref_txt.SetTextThickness(mm(0.14))
-    ref_txt.SetTextAngleDegrees(0.0)
+    ref_txt.SetTextSize(pcbnew.VECTOR2I(mm(text_size), mm(text_size)))
+    ref_txt.SetTextThickness(mm(text_thick))
+    ref_txt.SetTextAngleDegrees(ref_angle)
     ref_txt.SetPosition(pt(x + ref_offset[0], y + ref_offset[1]))
 
     val_txt = fp.Value()
     val_txt.SetVisible(show_val)
     val_txt.SetLayer(pcbnew.F_SilkS)
-    val_txt.SetTextSize(pcbnew.VECTOR2I(mm(0.8), mm(0.8)))
-    val_txt.SetTextThickness(mm(0.13))
-    val_txt.SetTextAngleDegrees(0.0)
+    val_txt.SetTextSize(pcbnew.VECTOR2I(mm(text_size), mm(text_size)))
+    val_txt.SetTextThickness(mm(text_thick))
+    val_txt.SetTextAngleDegrees(val_angle)
     val_txt.SetPosition(pt(x + val_offset[0], y + val_offset[1]))
     return fp
 
@@ -321,9 +321,6 @@ def build_board():
     add_silk_text(board, "GND", 5.8 + S, 44.02, size_mm=0.85, bold=True)
     add_silk_text(board, "USB-C", 22.7 + S, 59.0, size_mm=1.0, bold=True)
     add_silk_text(board, "ANTENNA KEEP-OUT", 22.7 + S, 2.0, size_mm=0.85)
-    for label, pnum in [("G16", "21"), ("G17", "22"), ("G18", "24"), ("G19", "25"), ("G21", "26"), ("G22", "29")]:
-        _, py = pad_xy(u2, pnum)
-        add_silk_text(board, label, 38.2 + S, py, size_mm=0.8)
 
     # 3B. Top-Facing DIN-Rail LAN / Ethernet Subsystem (HR911105A + W5500)
     # J_LAN: HanRun HR911105A at (22.5, 16.0) rotated 180 deg -> RJ45 port faces TOP EDGE (y=0)!
@@ -409,7 +406,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Package_TO_SOT_SMD.pretty",
         "SOT-223-3_TabPin2",
         "U4", "AMS1117-3.3", 18.0, 60.0, angle=0.0,
-        ref_offset=(0.0, -3.5), val_offset=(0.0, 3.5)
+        ref_offset=(0.0, -6.5), val_offset=(0.0, -5.2),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(u4, "1", net_gnd)
     set_pad_net(u4, ["2", "4"], net_3v3_eth)
@@ -441,15 +439,15 @@ def build_board():
         f"{KICAD_FP_DIR}/TerminalBlock_Phoenix.pretty",
         "TerminalBlock_Phoenix_MKDS-3-2-5.08_1x02_P5.08mm_Horizontal",
         "J1", "24V_IN", 47.0 + S, 7.5, angle=180.0,
-        ref_offset=(-2.54, 8.2), val_offset=(-2.54, 10.0)
+        show_ref=False, show_val=False
     )
     set_pad_net(j1, "1", net_24v_in)
     set_pad_net(j1, "2", net_gnd)
     board.Add(j1)
     j1_p1 = pad_xy(j1, "1")
     j1_p2 = pad_xy(j1, "2")
-    add_silk_text(board, "+24V", j1_p1[0], 13.9, size_mm=1.0, thickness_mm=0.2, bold=True)
-    add_silk_text(board, "-GND", j1_p2[0], 13.9, size_mm=1.0, thickness_mm=0.2, bold=True)
+    add_silk_text(board, "+24V", j1_p1[0], 15.2, size_mm=0.9, thickness_mm=0.18, bold=True)
+    add_silk_text(board, "-GND", j1_p2[0], 15.2, size_mm=0.9, thickness_mm=0.18, bold=True)
     add_silk_text(board, "+", j1_p1[0], 10.5, size_mm=1.4, thickness_mm=0.25, bold=True, layer=pcbnew.B_SilkS)
     add_silk_text(board, "-", j1_p2[0], 10.5, size_mm=1.4, thickness_mm=0.25, bold=True, layer=pcbnew.B_SilkS)
 
@@ -467,7 +465,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Package_TO_SOT_SMD.pretty",
         "TO-252-3_TabPin2",
         "Q_REV", "AOD403", 76.0 + S, 8.5, angle=0.0,
-        ref_offset=(0.0, -5.2), val_offset=(0.0, 5.2)
+        ref_offset=(0.0, -6.0), val_offset=(0.0, -4.8),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(q_rev, "1", net_rev_gate)
     set_pad_net(q_rev, ["2", ""], net_24v_fused)
@@ -478,7 +477,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Diode_SMD.pretty",
         "D_SOD-123",
         "DZ1", "BZT52C12", 71.0 + S, 16.5, angle=180.0,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(dz1, "1", net_24v_bus)
     set_pad_net(dz1, "2", net_rev_gate)
@@ -488,7 +488,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Resistor_SMD.pretty",
         "R_0805_2012Metric",
         "R_REV", "100k", 78.0 + S, 16.5,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(0.0, -1.8), val_offset=(0.0, 1.8),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(r_rev, "1", net_rev_gate)
     set_pad_net(r_rev, "2", net_gnd)
@@ -498,7 +499,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Diode_SMD.pretty",
         "D_SMB",
         "D_TVS", "SMBJ28A", 86.5 + S, 18.5,
-        ref_offset=(0.0, -2.8), val_offset=(0.0, 2.8)
+        ref_offset=(0.0, -2.8), val_offset=(0.0, 2.8),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(d_tvs, "1", net_24v_bus)
     set_pad_net(d_tvs, "2", net_gnd)
@@ -518,7 +520,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Capacitor_SMD.pretty",
         "C_1206_3216Metric",
         "C2", "10uF 50V", 95.0 + S, 14.5,
-        ref_offset=(0.0, -2.2), val_offset=(0.0, 2.2)
+        ref_offset=(0.0, -2.2), val_offset=(0.0, 2.2),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(c2, "1", net_24v_bus)
     set_pad_net(c2, "2", net_gnd)
@@ -528,7 +531,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Capacitor_SMD.pretty",
         "C_0805_2012Metric",
         "C3", "100nF", 95.0 + S, 20.0,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(c3, "1", net_24v_bus)
     set_pad_net(c3, "2", net_gnd)
@@ -539,7 +543,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Capacitor_THT.pretty",
         "CP_Radial_D6.3mm_P2.50mm",
         "C4", "100uF 35V", 44.5 + S, 23.0, angle=-90.0,
-        ref_offset=(0.0, -4.5), val_offset=(0.0, 5.2)
+        ref_offset=(0.0, -4.8), val_offset=(0.0, 6.0),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(c4, "1", net_24v_bus)
     set_pad_net(c4, "2", net_gnd)
@@ -549,7 +554,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Package_SO.pretty",
         "SOIC-8_3.9x4.9mm_P1.27mm",
         "U1", "XL1509-5.0", 54.0 + S, 23.5,
-        ref_offset=(0.0, -3.5), val_offset=(0.0, 3.5)
+        ref_offset=(0.0, -3.7), val_offset=(0.0, -5.0),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(u1, "1", net_24v_bus)
     set_pad_net(u1, "2", net_sw)
@@ -561,7 +567,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Diode_SMD.pretty",
         "D_SMA",
         "D_BUCK", "SS34", 54.0 + S, 30.0,
-        ref_offset=(0.0, 2.2), val_offset=(0.0, 3.5)
+        ref_offset=(0.0, -2.8), val_offset=(0.0, 2.8),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(d_buck, "1", net_sw)
     set_pad_net(d_buck, "2", net_gnd)
@@ -571,7 +578,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Inductor_SMD.pretty",
         "L_Bourns_SRN6045TA",
         "L1", "33uH 3A", 64.5 + S, 25.0,
-        ref_offset=(0.0, -4.5), val_offset=(0.0, 4.5)
+        ref_offset=(0.0, -4.0), val_offset=(0.0, 4.0),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(l1, "1", net_sw)
     set_pad_net(l1, "2", net_5v)
@@ -581,7 +589,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Capacitor_THT.pretty",
         "CP_Radial_D6.3mm_P2.50mm",
         "C5", "220uF 16V", 74.0 + S, 25.0,
-        ref_offset=(1.25, -4.5), val_offset=(1.25, 4.5)
+        ref_offset=(1.25, -4.5), val_offset=(1.25, 4.5),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(c5, "1", net_5v)
     set_pad_net(c5, "2", net_gnd)
@@ -591,7 +600,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Capacitor_SMD.pretty",
         "C_0805_2012Metric",
         "C6", "100nF", 74.0 + S, 32.0,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(3.6, -0.6), val_offset=(3.6, 0.6),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(c6, "1", net_5v)
     set_pad_net(c6, "2", net_gnd)
@@ -601,7 +611,8 @@ def build_board():
         f"{KICAD_FP_DIR}/Resistor_SMD.pretty",
         "R_0805_2012Metric",
         "R_PWR", "1k", 39.5 + S, 45.0,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(0.0, -2.0), val_offset=(0.0, -3.2),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(r_pwr, "1", net_5v)
     set_pad_net(r_pwr, "2", net_pwr_led)
@@ -611,7 +622,8 @@ def build_board():
         f"{KICAD_FP_DIR}/LED_SMD.pretty",
         "LED_0805_2012Metric",
         "D_PWR", "LED GRN", 39.5 + S, 49.5,
-        ref_offset=(0.0, -2.0), val_offset=(0.0, 2.0)
+        ref_offset=(0.0, 2.0), val_offset=(0.0, 3.2),
+        text_size=0.8, text_thick=0.13
     )
     set_pad_net(d_pwr, "2", net_pwr_led)
     set_pad_net(d_pwr, "1", net_gnd)
@@ -627,7 +639,8 @@ def build_board():
             f"{KICAD_FP_DIR}/Resistor_SMD.pretty",
             "R_0805_2012Metric",
             f"R{2*ch}", "10k", cx - 3.0, 39.0,
-            ref_offset=(0.0, -1.6), val_offset=(0.0, -3.0)
+            ref_offset=(0.0, -1.6), val_offset=(0.0, -2.8),
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(rpd, "1", net_pwm[idx])
         set_pad_net(rpd, "2", net_gnd)
@@ -637,7 +650,8 @@ def build_board():
             f"{KICAD_FP_DIR}/Resistor_SMD.pretty",
             "R_0805_2012Metric",
             f"R{2*ch-1}", "100R", cx + 2.5, 39.0,
-            ref_offset=(0.0, -1.6), val_offset=(0.0, -3.0)
+            ref_offset=(0.0, -1.6), val_offset=(0.0, -2.8),
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(rg, "1", net_pwm[idx])
         set_pad_net(rg, "2", net_gate[idx])
@@ -647,7 +661,8 @@ def build_board():
             f"{KICAD_FP_DIR}/Package_TO_SOT_SMD.pretty",
             "TO-252-3_TabPin2",
             f"Q{ch}", "AOD4184A", cx, 46.8, angle=-90.0,
-            ref_offset=(0.0, -6.0), val_offset=(0.0, 4.2)
+            ref_offset=(-2.2, -12.5), val_offset=(2.2, -12.5),
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(q, "1", net_gate[idx])
         set_pad_net(q, ["2", ""], net_out[idx])
@@ -658,7 +673,9 @@ def build_board():
             f"{KICAD_FP_DIR}/Diode_SMD.pretty",
             "D_SMA",
             f"D{ch}", "SS34", cx - 3.5, 55.2, angle=-90.0,
-            ref_offset=(0.0, -3.1), val_offset=(0.0, 2.7)
+            ref_offset=(-2.65, -1.6), val_offset=(-2.65, 1.6),
+            ref_angle=90.0, val_angle=90.0,
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(d_fly, "1", net_24v_bus)
         set_pad_net(d_fly, "2", net_out[idx])
@@ -668,7 +685,8 @@ def build_board():
             f"{KICAD_FP_DIR}/Resistor_SMD.pretty",
             "R_0805_2012Metric",
             f"RL{ch}", "10k", cx + 3.0, 52.5,
-            ref_offset=(0.0, -1.3), val_offset=(0.0, 1.3)
+            ref_offset=(0.0, 1.8), val_offset=(-3.5, 0.0),
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(r_led, "1", net_24v_bus)
         set_pad_net(r_led, "2", net_led[idx])
@@ -678,7 +696,9 @@ def build_board():
             f"{KICAD_FP_DIR}/LED_SMD.pretty",
             "LED_0805_2012Metric",
             f"LED{ch}", "LED", cx + 3.0, 56.2,
-            ref_offset=(0.0, -1.3), val_offset=(0.0, 1.3)
+            ref_offset=(0.0, 1.8),
+            show_val=False,
+            text_size=0.8, text_thick=0.13
         )
         set_pad_net(led, "2", net_led[idx])
         set_pad_net(led, "1", net_out[idx])
@@ -688,18 +708,18 @@ def build_board():
             f"{KICAD_FP_DIR}/TerminalBlock_Phoenix.pretty",
             "TerminalBlock_Phoenix_MKDS-1,5-2-5.08_1x02_P5.08mm_Horizontal",
             f"J{ch+1}", f"CH{ch}", cx - 2.54, 65.5, angle=0.0,
-            ref_offset=(2.54, -4.8), val_offset=(2.54, 4.9)
+            show_ref=False, show_val=False
         )
-        j_out.Reference().SetVisible(False)
         set_pad_net(j_out, "1", net_24v_bus)
         set_pad_net(j_out, "2", net_out[idx])
         board.Add(j_out)
 
-        # Clear, bold + and - polarity markings right in front of each terminal block (Top & Bottom)
-        add_silk_text(board, "+", cx - 2.54, 59.6, size_mm=1.4, thickness_mm=0.24, bold=True)
-        add_silk_text(board, "-", cx + 2.54, 59.6, size_mm=1.4, thickness_mm=0.24, bold=True)
-        add_silk_text(board, "+", cx - 2.54, 62.5, size_mm=1.4, thickness_mm=0.24, bold=True, layer=pcbnew.B_SilkS)
-        add_silk_text(board, "-", cx + 2.54, 62.5, size_mm=1.4, thickness_mm=0.24, bold=True, layer=pcbnew.B_SilkS)
+        # Clear, bold + and - polarity markings and CHx label (Top & Bottom)
+        add_silk_text(board, f"CH{ch}", cx - 0.5, 54.5, size_mm=0.85, thickness_mm=0.16, bold=True)
+        add_silk_text(board, "+", cx - 2.54, 59.2, size_mm=0.85, thickness_mm=0.14, bold=True)
+        add_silk_text(board, "-", cx + 2.54, 59.2, size_mm=0.85, thickness_mm=0.14, bold=True)
+        add_silk_text(board, "+", cx - 2.54, 62.5, size_mm=1.3, thickness_mm=0.22, bold=True, layer=pcbnew.B_SilkS)
+        add_silk_text(board, "-", cx + 2.54, 62.5, size_mm=1.3, thickness_mm=0.22, layer=pcbnew.B_SilkS)
         ch_parts.append((rg, rpd, q, d_fly, r_led, led, j_out))
 
     # 7. Branding, Logo, Version & Design Date (Top-Right Corner)
@@ -741,18 +761,18 @@ def build_board():
     # Connect Pad 12 to Pad 9 cleanly on F.Cu above the LED row
     add_route(board, [jp12, (jp12[0], 2.2), (jp9[0], 2.2), jp9], 0.35, pcbnew.F_Cu, net_3v3_eth)
 
-    # HR911105A LEDs: 10->25 (Link) & 11->27 (Act) drop to B.Cu at x=23.2 and route around SH (25.805, 12.69)
+    # HR911105A LEDs: 10->25 (Link) & 11->27 (Act) drop to B.Cu at x=23.4 and route around SH (25.805, 12.69)
     jp10, up25 = pad_xy(j_lan, "10"), pad_xy(u3, "25")
-    add_via(board, 23.2, up25[1], net_link_led, dia_mm=0.6, drill_mm=0.3)
-    add_track(board, up25[0], up25[1], 23.2, up25[1], 0.22, pcbnew.F_Cu, net_link_led)
-    add_route(board, [(23.2, up25[1]), (29.0, up25[1]), (29.0, 6.4)], 0.22, pcbnew.B_Cu, net_link_led)
+    add_via(board, 23.4, up25[1], net_link_led, dia_mm=0.6, drill_mm=0.3)
+    add_track(board, up25[0], up25[1], 23.4, up25[1], 0.22, pcbnew.F_Cu, net_link_led)
+    add_route(board, [(23.4, up25[1]), (29.0, up25[1]), (29.0, 6.4)], 0.22, pcbnew.B_Cu, net_link_led)
     add_via(board, 29.0, 6.4, net_link_led, dia_mm=0.6, drill_mm=0.3)
     add_route(board, [(29.0, 6.4), (jp10[0], 6.4), jp10], 0.22, pcbnew.F_Cu, net_link_led)
 
     jp11, up27 = pad_xy(j_lan, "11"), pad_xy(u3, "27")
-    add_via(board, 23.2, up27[1], net_act_led, dia_mm=0.6, drill_mm=0.3)
-    add_track(board, up27[0], up27[1], 23.2, up27[1], 0.22, pcbnew.F_Cu, net_act_led)
-    add_route(board, [(23.2, up27[1]), (28.2, up27[1]), (28.2, 2.5), (jp11[0], 2.5), jp11], 0.22, pcbnew.B_Cu, net_act_led)
+    add_via(board, 23.4, up27[1], net_act_led, dia_mm=0.6, drill_mm=0.3)
+    add_track(board, up27[0], up27[1], 23.4, up27[1], 0.22, pcbnew.F_Cu, net_act_led)
+    add_route(board, [(23.4, up27[1]), (28.2, up27[1]), (28.2, 2.5), (jp11[0], 2.5), jp11], 0.22, pcbnew.B_Cu, net_act_led)
 
     # W5500 Crystal Y1 (XI=30 on F.Cu x=24.0 -> 53.1, XO=31 on F.Cu x=24.8 -> 47.0 -> B.Cu under XI -> F.Cu!)
     u3_xi = pad_xy(u3, "30")
@@ -992,9 +1012,9 @@ def build_board():
     # 11. High-Current +24V_BUS Feeder & Copper Pours
     add_route(board, [c1_p1, (c1_p1[0], 13.5), (93.0 + S, 13.5), (93.0 + S, 23.0), (116.0 + S, 23.0), (116.0 + S, 60.5)], 3.0, pcbnew.F_Cu, net_24v_bus)
 
-    add_zone(board, net_gnd, pcbnew.B_Cu, [(1.0, 1.0), (BOARD_W - 1.0, 1.0), (BOARD_W - 1.0, BOARD_H - 1.0), (1.0, BOARD_H - 1.0)], priority=0)
-    add_zone(board, net_24v_bus, pcbnew.F_Cu, [(42.5 + S, 51.0), (118.0 + S, 51.0), (118.0 + S, 70.0), (42.5 + S, 70.0)], priority=1)
-    add_zone(board, net_gnd, pcbnew.F_Cu, [(32.0, 12.0), (40.5 + S, 12.0), (40.5 + S, 70.0), (32.0, 70.0)], priority=0)
+    add_zone(board, net_gnd, pcbnew.B_Cu, [(1.0, 1.0), (BOARD_W - 1.0, 1.0), (BOARD_W - 1.0, BOARD_H - 1.0), (1.0, BOARD_H - 1.0)], priority=0, clearance_mm=0.5)
+    add_zone(board, net_24v_bus, pcbnew.F_Cu, [(42.5 + S, 51.0), (118.0 + S, 51.0), (118.0 + S, 70.0), (42.5 + S, 70.0)], priority=1, clearance_mm=0.3)
+    add_zone(board, net_gnd, pcbnew.F_Cu, [(32.0, 12.0), (40.5 + S, 12.0), (40.5 + S, 70.0), (32.0, 70.0)], priority=0, clearance_mm=0.5)
 
     filler = pcbnew.ZONE_FILLER(board)
     filler.Fill(board.Zones())
